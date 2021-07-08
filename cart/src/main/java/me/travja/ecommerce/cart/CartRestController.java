@@ -1,4 +1,4 @@
-package me.travja.ecommerce.cart;
+package me.travja.ecommerce.card;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package me.travja.ecommerce.cart;
+package me.travja.ecommerce.checkout;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

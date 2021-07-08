@@ -1,4 +1,4 @@
-package me.travja.ecommerce.card;
+package me.travja.ecommerce.cart;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

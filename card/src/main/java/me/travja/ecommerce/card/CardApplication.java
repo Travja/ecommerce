@@ -1,13 +1,13 @@
-package me.travja.ecommerce.cart;
+package me.travja.ecommerce.card;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CheckoutApplication {
+public class CardApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CheckoutApplication.class, args);
+		SpringApplication.run(CardApplication.class, args);
 	}
 
 }
