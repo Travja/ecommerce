@@ -13,7 +13,9 @@ public class CardRestController {
 
     @PostMapping("/check")
     public boolean checkCard(@RequestBody CardInfo info) {
-        return true;
+        return !info.isExpired() &&
+                (String.valueOf(info.getCardNumber()).endsWith("4") ||
+                        String.valueOf(info.getCardNumber()).endsWith("5"));
     }
 
 }

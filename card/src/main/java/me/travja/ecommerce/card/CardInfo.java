@@ -12,7 +12,7 @@ public class CardInfo {
     private int cvv;
 
     public boolean isExpired() {
-        return new Date().before(getExpirationDate());
+        return new Date().after(getExpirationDate());
     }
 
 }
