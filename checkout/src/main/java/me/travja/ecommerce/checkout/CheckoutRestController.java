@@ -35,7 +35,7 @@ public class CheckoutRestController {
         System.out.println("Card is " + (authorized ? "" : "not ") + "authorized.");
 
         if (authorized) {
-            //Actually do the transaction.
+            // TODO Actually do the transaction.
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
