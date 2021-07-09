@@ -90,6 +90,25 @@ services:
     networks:
       - ecommerce
 
+  email-service:
+    build:
+      context: ./email
+    container_name: email-service
+    depends_on:
+      - ecommerce-mysql
+    restart: always
+    ports:
+      - 8084:8080
+    expose:
+      - 8080
+    environment:
+      - DATABASE_HOST=ecommerce-mysql
+      - DATABASE_NAME=ecom
+      - DATABASE_USERNAME=Travja
+      - DATABASE_PASSWORD=test
+    networks:
+      - ecommerce
+
 #  lab3-rabbitmq-producer:
 #    build:
 #      context: rabbitmq-producer

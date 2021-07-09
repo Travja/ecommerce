@@ -15,24 +15,25 @@ public class EmailRestController {
 
     private final JavaMailSender emailSender;
 
-    public EmailRestController(JavaMailSender emailSender) {
-        this.emailSender = emailSender;
-    }
-
-    public void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(MailConfiguration.email);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        emailSender.send(message);
+    public boolean sendSimpleMessage(String to, String subject, String text) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(MailConfiguration.email);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(text);
+            emailSender.send(message);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @PostMapping("")
-    public void sendEmail(@RequestBody EmailRequest request) {
-        //TODO Implement this
-        sendSimpleMessage(request.getEmail(), "Order received!",
-                "We have received your order. Your items total: $" + request.getCart().getTotal());
+    public boolean sendEmail(@RequestBody EmailRequest request) {
+        return sendSimpleMessage(request.getEmail(), "Order received!",
+                String.format("We have received your order. Your items total: $%.2f", request.getCart().getTotal()));
     }
 
 }
