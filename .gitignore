@@ -2,3 +2,4 @@
 *.iml
 docker/mysql/
 */.mvn/
+*/node_modules/
