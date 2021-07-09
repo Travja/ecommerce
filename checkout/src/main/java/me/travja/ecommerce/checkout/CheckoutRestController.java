@@ -38,7 +38,7 @@ public class CheckoutRestController {
 
         if (authorized) {
 
-            Order order = new Order();
+            CartOrder order = new CartOrder();
             order.setAddress(address);
             order.setEmail(email);
             order.setItems(cart.getItems());

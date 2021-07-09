@@ -7,19 +7,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends CrudRepository<Order, Integer> {
+public interface OrderRepository extends CrudRepository<CartOrder, Integer> {
 
-    List<Order> findAll();
+    List<CartOrder> findAll();
 
-    Optional<Order> findItemById(int id);
+    Optional<CartOrder> findItemById(int id);
 
 //    @Query(nativeQuery = true, value = "SELECT * FROM item i WHERE i.title = :title " +
 //            "and i.description = :description LIMIT 1")
 //    Item match(@Param("title") String title, @Param("description") String description);
 
-    Order save(Order order);
+    CartOrder save(CartOrder order);
 
-    void delete(Order order);
+    void delete(CartOrder order);
 
     void deleteById(int id);
 

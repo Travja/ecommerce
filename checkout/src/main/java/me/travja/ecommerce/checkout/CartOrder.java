@@ -8,13 +8,13 @@ import java.util.List;
 
 @Entity
 @Data
-public class Order {
+public class CartOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<CartItem> items = new ArrayList<>();
 
     private String email, address;

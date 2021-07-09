@@ -109,68 +109,22 @@ services:
     networks:
       - ecommerce
 
-#  lab3-rabbitmq-producer:
-#    build:
-#      context: rabbitmq-producer
-#    restart: always
-#    depends_on:
-#      - lab3-rabbitmq-mysql
-#    expose:
-#      - 8080
-#    environment:
-#      - DATABASE_HOST=lab3-rabbitmq-mysql
-#      - DATABASE_NAME=lab3
-#      - DATABASE_USERNAME=dstephenson
-#      - DATABASE_PASSWORD=test
-#      - RABBITMQ_HOST=lab3-rabbitmq
-#      - RABBITMQ_USERNAME=dstephenson
-#      - RABBITMQ_PASSWORD=test
-#      - RABBITMQ_QUEUE=neumont.queue
-#      - RABBITMQ_EXCHANGE=neumont.exchange
-#      - RABBITMQ_ROUTING_KEY=neumont.routingKey
-#    networks:
-#      - lab3
-#
-#  lab3-rabbitmq-consumer:
-#    build:
-#      context: ./rabbitmq-consumer
-#    restart: always
-#    container_name: lab3-rabbitmq-consumer
-#    depends_on:
-#      - lab3-rabbitmq
-#    ports:
-#      - 8082:8080
-#    environment:
-#      - RABBITMQ_HOST=lab3-rabbitmq
-#      - RABBITMQ_USERNAME=dstephenson
-#      - RABBITMQ_PASSWORD=test
-#      - RABBITMQ_QUEUE=neumont.queue
-#    networks:
-#      - lab3
-#
-#  lab3-rabbitmq-balancer:
-#    build:
-#      context: ./rabbitmq-producer/docker/nginx
-#    container_name: lab3-rabbitmq-balancer
-#    depends_on:
-#      - lab3-rabbitmq-producer
-#    ports:
-#      - 9090:9090
-#    networks:
-#      - lab3
-#
-#  lab3-rabbitmq:
-#    build:
-#      context: rabbitmq-producer/docker/rabbitmq
-#    container_name: lab3-rabbitmq
-#    hostname: lab3-rabbitmq
-#    ports:
-#      - 5672:5672
-#      - 8081:15672
-#    volumes:
-#      - ./rabbitmq-producer/docker/rabbitmq/data:/var/lib/rabbitmq/mnesia
-#    networks:
-#      - lab3
+  node:
+    build:
+      context: ./ecommerce
+    container_name: node
+    depends_on:
+      - ecommerce-catalog
+      - ecommerce-mysql
+      - ecommerce-carts
+      - ecommerce-checkout
+    restart: always
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    networks:
+      - ecommerce
 
 networks:
   ecommerce:
