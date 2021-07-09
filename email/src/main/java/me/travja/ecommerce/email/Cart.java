@@ -23,4 +23,8 @@ public class Cart {
 
     }
 
+    public double getTotal() {
+        return items.stream().mapToDouble(item -> item.getUnitPrice() * item.getQty()).sum();
+    }
+
 }
