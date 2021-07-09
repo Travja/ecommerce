@@ -3,3 +3,13 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  table(id='items')
+    tr
+      th ID
+      th Title
+      th Description
+      th Unit Price
+
+block scripts
+  script(src='javascripts/load-items.js')

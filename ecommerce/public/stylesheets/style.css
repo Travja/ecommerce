@@ -1,8 +1,22 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+#content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#items, #items td, #items th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+    text-align: center;
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }

@@ -8,6 +8,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@CrossOrigin
 public class CatalogRestController {
 
     private final CatalogRepository repo;
