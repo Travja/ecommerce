@@ -21,6 +21,8 @@ import java.net.URL;
 @AllArgsConstructor
 public class CheckoutRestController {
 
+    private OrderRepository repo;
+
     @PostMapping("")
     public ResponseEntity<Object> getCart(@RequestBody CheckoutRequest request) {
 
@@ -35,7 +37,14 @@ public class CheckoutRestController {
         System.out.println("Card is " + (authorized ? "" : "not ") + "authorized.");
 
         if (authorized) {
-            // TODO Add completed order to DB
+
+            Order order = new Order();
+            order.setAddress(address);
+            order.setEmail(email);
+            order.setItems(cart.getItems());
+
+            repo.save(order);
+
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setCart(cart);
             emailRequest.setEmail(email);
