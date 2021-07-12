@@ -18,6 +18,11 @@ public class CatalogRestController {
         return repo.findAll();
     }
 
+    @GetMapping("/items/search")
+    public List<Item> searchItems(@RequestParam String title) {
+        return repo.searchByTitle(title);
+    }
+
     @PostMapping("/items")
     public void createItem(@RequestBody Item item) {
         repo.save(item);

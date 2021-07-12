@@ -1,0 +1,9 @@
+Travis Eggett - Microservices
+
+This whole zip contains all microservices and their respective configurations. I've done my best to remove any unnecessary files such as installed node packages and target directories for sake of zip size.
+
+To run the whole suite, you need only execute either the docker.bat or docker.sh. This will package the microservices and deploy them to docker via the docker-compose.yml. From there, once everything is loaded up, you can access the front-end implementation via http://127.0.0.1:3000 and everything should work nicely.
+
+As a means of warning, I don't have any data validation in place for many of the inputs at the moment. So for example, emails don't have to be valid, it is possible to enter more than 3 digits for a CVV (or none at all), etc. Please be nice. Haha! If you enter good data where it's necessary, things should work fine.
+
+Thank you!

@@ -1,4 +1,5 @@
 const defCart = document.getElementById('cart').innerHTML;
+const defCatalog = document.getElementById('items').innerHTML;
 
 let createElement = (tagName, contents) => {
     let elm = document.createElement(tagName);
@@ -69,6 +70,33 @@ let getItems = () => {
                 return;
             }
             let tbl = document.getElementById('items');
+            data.forEach(item => {
+                let elm = document.createElement('tr');
+                elm.appendChild(createElement('td', item.id));
+                elm.appendChild(createElement('td', item.title));
+                elm.appendChild(createElement('td', item.description));
+                elm.appendChild(createElement('td', '$' + item.unitPrice));
+                elm.appendChild(createElement('td', createAddButton(item)));
+                tbl.appendChild(elm);
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+let searchItems = (title) => {
+    fetch('http://' + window.location.hostname + ':8080/api/items/search?title=' + title)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            if (!data) {
+                console.log('Received null data');
+                return;
+            }
+            let tbl = document.getElementById('items');
+            tbl.innerHTML = defCart;
             data.forEach(item => {
                 let elm = document.createElement('tr');
                 elm.appendChild(createElement('td', item.id));
@@ -211,4 +239,9 @@ document.getElementById('checkoutBtn').onclick = () => {
     });
 
     console.log(href);
+};
+
+document.getElementById('searchBtn').onclick = evt => {
+    console.log('Searching');
+    searchItems(document.getElementById('search').value);
 };

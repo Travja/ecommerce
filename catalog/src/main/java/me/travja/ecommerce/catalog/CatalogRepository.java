@@ -19,6 +19,9 @@ public interface CatalogRepository extends CrudRepository<Item, Integer> {
             "and i.description = :description LIMIT 1")
     Item match(@Param("title") String title, @Param("description") String description);
 
+    @Query(nativeQuery = true, value = "select * from item i where lower(i.title) like lower(concat('%', :title,'%'))")
+    List<Item> searchByTitle(String title);
+
     Item save(Item item);
 
     void delete(Item item);
