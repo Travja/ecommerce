@@ -10,7 +10,8 @@ body {
     flex-direction: column;
 }
 
-#items, #items td, #items th {
+#items, #items td, #items th,
+#cart, #cart td, #cart th {
     border: 1px solid black;
     border-collapse: collapse;
     padding: 5px;
@@ -19,4 +20,9 @@ body {
 
 a {
     color: #00B7FF;
+}
+
+hr {
+    width: 80%;
+    margin: 30px auto;
 }

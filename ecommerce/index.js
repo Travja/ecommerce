@@ -3,6 +3,7 @@ let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
+const session = require('express-session');
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
@@ -18,6 +19,20 @@ index.use(express.json());
 index.use(express.urlencoded({extended: false}));
 index.use(cookieParser());
 index.use(express.static(path.join(__dirname, 'public')));
+// Session Setup
+index.use(session({
+
+    // It holds the secret key for session
+    secret: 'travjasSecret',
+
+    // Forces the session to be saved
+    // back to the session store
+    resave: true,
+
+    // Forces a session that is "uninitialized"
+    // to be saved to the store
+    saveUninitialized: true
+}));
 
 index.use('/', indexRouter);
 index.use('/users', usersRouter);

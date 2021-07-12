@@ -1,4 +1,4 @@
-package me.travja.ecommerce.card;
+package me.travja.ecommerce.cart;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +10,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/cart")
 @AllArgsConstructor
+@CrossOrigin
 public class CartRestController {
 
     private final CartRepository repo;
@@ -20,9 +21,9 @@ public class CartRestController {
         return repo.findAll();
     }
 
-    @GetMapping("")
-    public Cart getCart(HttpServletRequest request) {
-        String id = request.getSession().getId();
+    @GetMapping("/{sid}")
+    public Cart getCart(@PathVariable String sid) {
+        String id = sid;
         System.out.println("ID is " + id);
         return repo.findBySessionId(id).orElse(null);
     }
@@ -41,22 +42,22 @@ public class CartRestController {
 //        return remoteAddr;
 //    }
 
-    @PostMapping("/additem")
-    public void addItem(HttpServletRequest request, @RequestBody CartItem item) {
+    @PostMapping("/{sid}/additem")
+    public void addItem(@PathVariable String sid, @RequestBody CartItem item) {
         CartItem temp = itemRepo.findById(item.getId()).orElse(null);
         if (temp == null)
             itemRepo.save(item);
 
-        String id = request.getSession().getId();
+        String id = sid;
         Cart cart = repo.findBySessionId(id).orElse(new Cart(id));
 
         cart.addItem(item);
         repo.save(cart);
     }
 
-    @PostMapping("removeitem/{itemId}")
-    public void removeItem(HttpServletRequest request, @PathVariable int itemId) {
-        String id = request.getSession().getId();
+    @PostMapping("/{sid}/removeitem/{itemId}")
+    public void removeItem(@PathVariable String sid, @PathVariable int itemId) {
+        String id = sid;
         Cart cart = repo.findBySessionId(id).orElse(new Cart(id));
 
         Optional<CartItem> item = cart.getItems().stream().filter(it -> it.getId() == itemId).findFirst();
@@ -71,17 +72,12 @@ public class CartRestController {
         itemRepo.findAll().stream().filter(it -> it.getCart() == null).forEach(it -> itemRepo.delete(it));
     }
 
-    @DeleteMapping("")
-    public void removeLocalCart(HttpServletRequest request) {
-        repo.findBySessionId(request.getSession().getId()).ifPresent(cart -> cart.destroy());
-        repo.deleteBySessionId(request.getSession().getId());
+    @DeleteMapping("/{sid}")
+    public void removeLocalCart(@PathVariable String sid) {
+        repo.findBySessionId(sid).ifPresent(cart -> cart.destroy());
+        repo.deleteBySessionId(sid);
 
         purgeItems();
-    }
-
-    @DeleteMapping("/{id}")
-    public void removeCart(@PathVariable String id) {
-        repo.deleteById(id);
     }
 
 }

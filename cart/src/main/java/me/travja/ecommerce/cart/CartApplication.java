@@ -1,4 +1,4 @@
-package me.travja.ecommerce.card;
+package me.travja.ecommerce.cart;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

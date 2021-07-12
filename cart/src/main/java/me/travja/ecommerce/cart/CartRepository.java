@@ -1,4 +1,4 @@
-package me.travja.ecommerce.card;
+package me.travja.ecommerce.cart;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

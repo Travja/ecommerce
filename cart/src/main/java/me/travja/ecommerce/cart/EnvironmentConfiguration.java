@@ -1,4 +1,4 @@
-package me.travja.ecommerce.card;
+package me.travja.ecommerce.cart;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
