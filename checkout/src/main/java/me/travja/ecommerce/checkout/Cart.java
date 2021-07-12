@@ -32,32 +32,32 @@ public class Cart {
     }
 
     public void addItem(CartItem item) {
-        Optional<CartItem> i = items.stream().filter(it -> it.getId() == item.getId()).findFirst();
+        Optional<CartItem> i = items.stream().filter(it -> it.getItemId() == item.getItemId()).findFirst();
 
         i.ifPresentOrElse(
                 it -> it.setQty(it.getQty() + item.getQty()),
                 () -> {
                     items.add(item);
-                    item.setCart(this);
+//                    item.setCart(this);
                 }
         );
     }
 
     public void removeItem(CartItem item) {
-        Optional<CartItem> i = items.stream().filter(it -> it.getId() == item.getId()).findFirst();
+        Optional<CartItem> i = items.stream().filter(it -> it.getItemId() == item.getItemId()).findFirst();
 
         i.ifPresent(it -> {
             if (item.getQty() >= it.getQty()) {
                 items.remove(it);
-                it.setCart(null);
+//                it.setCart(null);
             } else
                 it.setQty(it.getQty() - item.getQty());
         });
-        item.setCart(null);
+//        item.setCart(null);
     }
 
     public void destroy() {
-        items.forEach(item -> item.setCart(null));
+//        items.forEach(item -> item.setCart(null));
         items.clear();
     }
 }

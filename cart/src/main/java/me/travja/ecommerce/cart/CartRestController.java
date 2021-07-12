@@ -3,9 +3,8 @@ package me.travja.ecommerce.cart;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cart")
@@ -42,42 +41,57 @@ public class CartRestController {
 //        return remoteAddr;
 //    }
 
+
     @PostMapping("/{sid}/additem")
     public void addItem(@PathVariable String sid, @RequestBody CartItem item) {
-        CartItem temp = itemRepo.findById(item.getId()).orElse(null);
-        if (temp == null)
-            itemRepo.save(item);
-
         String id = sid;
         Cart cart = repo.findBySessionId(id).orElse(new Cart(id));
+        if (!cart.containsItem(item)) {
+            System.out.println("CART ITEM NOT FOUND");
+            itemRepo.save(item);
+        }
 
+        System.out.println(item.getItemId());
         cart.addItem(item);
         repo.save(cart);
     }
 
-    @PostMapping("/{sid}/removeitem/{itemId}")
-    public void removeItem(@PathVariable String sid, @PathVariable int itemId) {
+    @PostMapping("/{sid}/removeitem")
+    @Transactional
+    public void removeItem(@PathVariable String sid, @RequestBody CartItem item) {
         String id = sid;
         Cart cart = repo.findBySessionId(id).orElse(new Cart(id));
 
-        Optional<CartItem> item = cart.getItems().stream().filter(it -> it.getId() == itemId).findFirst();
-
-        item.ifPresent(it -> cart.removeItem(it));
+        cart.removeItem(item);
 
         repo.save(cart);
-        purgeItems();
+        if (cart.getItems().stream().filter(it -> it.getItemId() == item.getItemId()).count() == 0)
+            itemRepo.delete(item);
+//        purgeItems();
     }
 
-    public void purgeItems() {
-        itemRepo.findAll().stream().filter(it -> it.getCart() == null).forEach(it -> itemRepo.delete(it));
-    }
+//    private void purgeItems() {
+//        itemRepo.findAll().forEach(it -> {
+//            List<Cart> carts = repo.findAll();
+//            boolean contained = false;
+//            for (Cart cart : carts) {
+//                if (cart.containsItem(it)) {
+//                    contained = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!contained)
+//                itemRepo.delete(it);
+//        });
+//    }
 
     @DeleteMapping("/{sid}")
+    @Transactional
     public void removeLocalCart(@PathVariable String sid) {
         repo.findBySessionId(sid).ifPresent(cart -> cart.destroy());
         repo.deleteBySessionId(sid);
-
-        purgeItems();
+//        purgeItems();
     }
 
 }

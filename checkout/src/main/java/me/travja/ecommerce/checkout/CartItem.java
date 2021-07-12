@@ -1,10 +1,13 @@
 package me.travja.ecommerce.checkout;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity//(name = "item")
 public class CartItem {
@@ -17,7 +20,8 @@ public class CartItem {
 
     @Getter
     @Setter
-    private int id;
+    @JsonProperty(value = "id")
+    private int itemId;
 
     @Getter
     @Setter
@@ -28,13 +32,16 @@ public class CartItem {
     @Getter
     @Setter
     private int qty;
-    @Getter
-    @Setter
-    @OneToOne
-    @JsonIgnore
-    private Cart cart;
 
-    public CartItem() {
-
+    @Override
+    public String toString() {
+        return "CartItem{" +
+                "uid=" + uid +
+                ", itemId=" + itemId +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", qty=" + qty +
+                '}';
     }
 }

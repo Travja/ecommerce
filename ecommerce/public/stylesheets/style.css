@@ -26,3 +26,27 @@ hr {
     width: 80%;
     margin: 30px auto;
 }
+
+.qtyCell {
+    display: flex;
+    flex-direction: row;
+}
+
+.qty {
+    margin: 0 10px;
+}
+
+.spacer {
+    flex-grow: 1;
+    min-width: 30px;
+}
+
+#checkout-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.group {
+    display: flex;
+    flex-direction: row;
+}

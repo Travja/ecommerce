@@ -7,12 +7,12 @@ import java.util.Date;
 @Data
 public class CardInfo {
 
-    private int cardNumber;
+    private long cardNumber;
     private Date expirationDate;
-    private int cvv;
+    private short cvv;
 
     public boolean isExpired() {
-        return new Date().after(getExpirationDate());
+        return new Date().before(getExpirationDate());
     }
 
 }

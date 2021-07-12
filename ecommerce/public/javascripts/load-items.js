@@ -10,56 +10,56 @@ let createElement = (tagName, contents) => {
     return elm;
 };
 
-let createAddButton = item => {
+let sendJsonRequest = (url, method, body) => {
+    return fetch(url, {
+        method,
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
+let createButton = (id, text, action) => {
     let btn = document.createElement('button');
-    btn.innerText = 'Add to Cart';
-    let sid = getCookie('sid');
+    btn.innerText = text;
+    if (id)
+        btn.id = id;
 
-    btn.onclick = evt => {
-        console.log(item.id);
-        item.qty = 1;
-        fetch('http://127.0.0.1:8081/cart/' + sid + '/additem', {
-            method: 'POST',
-            body: JSON.stringify(item),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => {
-            console.log('Successfully POSTed to cart.', res);
-
-            updateCart();
-        });
-    };
+    btn.onclick = action;
 
     return btn;
+};
+
+let addItem = item => {
+    let sid = getCookie('sid');
+    console.log(item);
+    item.qty = 1;
+    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/additem', 'POST', item)
+        .then(res => {
+            console.log('Successfully POSTed to cart.');
+            updateCart();
+        });
+};
+
+let createAddButton = item => {
+    return createButton(null, 'Add to Cart', evt => addItem(item));
 };
 
 let createRemoveButton = item => {
-    let btn = document.createElement('button');
-    btn.innerText = 'Add to Cart';
-    let sid = getCookie('sid');
+    return createButton(null, 'Remove', evt => {
+        let sid = getCookie('sid');
+        sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem', 'POST', item)
+            .then(res => {
+                console.log('Successfully removed item from cart.', res);
 
-    btn.onclick = evt => {
-        console.log(item.id);
-        item.qty = 1;
-        fetch('http://127.0.0.1:8081/cart/' + sid + '/removeitem', {
-            method: 'POST',
-            body: JSON.stringify(item),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => {
-            console.log('Successfully removed item from cart.', res);
-
-            updateCart();
-        });
-    };
-
-    return btn;
+                updateCart();
+            });
+    });
 };
 
 let getItems = () => {
-    fetch('http://127.0.0.1:8080/api/items')
+    fetch('http://' + window.location.hostname + ':8080/api/items')
         .then(response => {
             return response.json();
         })
@@ -68,14 +68,13 @@ let getItems = () => {
                 console.log('Received null data');
                 return;
             }
-            console.log(data);
             let tbl = document.getElementById('items');
             data.forEach(item => {
                 let elm = document.createElement('tr');
                 elm.appendChild(createElement('td', item.id));
                 elm.appendChild(createElement('td', item.title));
                 elm.appendChild(createElement('td', item.description));
-                elm.appendChild(createElement('td', '$' + item.unitPrice.toFixed(2)));
+                elm.appendChild(createElement('td', '$' + item.unitPrice));
                 elm.appendChild(createElement('td', createAddButton(item)));
                 tbl.appendChild(elm);
             });
@@ -88,9 +87,8 @@ let getItems = () => {
 let updateCart = () => {
     let sid = getCookie('sid');
 
-    fetch('http://127.0.0.1:8081/cart/' + sid)
+    fetch('http://' + window.location.hostname + ':8081/cart/' + sid)
         .then(response => {
-            console.log(response);
             return response.json();
         })
         .then(data => {
@@ -98,26 +96,54 @@ let updateCart = () => {
                 console.log('Cart info not found.');
                 return;
             }
-            console.log(data);
             let tbl = document.getElementById('cart');
             document.getElementById('cart').innerHTML = defCart;
-            data.items.forEach(item => {
-                let elm = document.createElement('tr');
-                elm.appendChild(createElement('td', item.id));
-                elm.appendChild(createElement('td', item.title));
-                elm.appendChild(createElement('td', item.description));
-                elm.appendChild(createElement('td', item.qty));
-                elm.appendChild(createElement('td', '$' + (item.unitPrice * item.qty).toFixed(2)));
-                elm.appendChild(createElement('td', createRemoveButton(item)));
-                tbl.appendChild(elm);
-            });
+            let subtotal = 0;
+            if (data.items)
+                data.items.forEach(item => {
+                    let elm = document.createElement('tr');
+                    elm.appendChild(createElement('td', item.id));
+                    elm.appendChild(createElement('td', item.title));
+                    elm.appendChild(createElement('td', item.description));
+
+                    let quantity = document.createElement('div');
+                    quantity.classList = ['qtyCell'];
+                    quantity.appendChild(createButton(null, '-', evt => {
+                        item.qty = 1;
+                        fetch('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem', {
+                            method: 'POST',
+                            body: JSON.stringify(item),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(res => {
+                            console.log('Successfully removed item from cart.', res);
+
+                            updateCart();
+                        });
+                    }));
+                    let qty = document.createElement('div');
+                    qty.innerHTML = item.qty;
+                    qty.classList = ['qty'];
+                    quantity.appendChild(qty);
+                    quantity.appendChild(createButton(null, '+', evt => addItem(item)));
+
+                    elm.appendChild(createElement('td', quantity));
+                    let cost = (item.unitPrice * item.qty);
+                    subtotal += cost;
+                    elm.appendChild(createElement('td', '$' + cost.toFixed(2)));
+                    elm.appendChild(createElement('td', createRemoveButton(item)));
+                    tbl.appendChild(elm);
+                });
+
+            document.getElementById('subtotal').innerHTML = "Subtotal: $" + subtotal.toFixed(2);
         })
         .catch(err => {
             console.log(err);
         });
 };
 
-function getCookie(cname) {
+let getCookie = (cname) => {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
@@ -131,7 +157,58 @@ function getCookie(cname) {
         }
     }
     return "";
-}
+};
+
+let getCart = (cname, callback) => {
+    fetch('http://' + window.location.hostname + ':8081/cart/' + cname)
+        .then(res => res.json())
+        .then(data => {
+            callback(data);
+        })
+        .catch(err => {
+            console.log('Could not get cart data for cart ' + cname);
+        });
+};
 
 getItems();
 updateCart();
+
+document.getElementById('checkoutBtn').onclick = () => {
+    let href = 'http://' + window.location.hostname + ':8082/checkout';
+
+    let name = document.getElementById('name').value;
+    let email = document.getElementById('email').value;
+    let address = document.getElementById('address').value;
+    let creditNum = document.getElementById('creditnum').value;
+    let expDate = new Date(document.getElementById('expdate').value);
+    expDate.setMonth(expDate.getMonth() + 1);
+    expDate = new Date(expDate.getMilliseconds() - 1000).toUTCString();
+    let cvv = document.getElementById('cvv').value;
+
+    let cardInfo = {
+        cardNumber: creditNum,
+        expirationDate: expDate,
+        cvv
+    }
+
+    getCart(getCookie('sid'), cart => {
+        let info = {
+            name,
+            email,
+            address,
+            cardInfo,
+            cart
+        };
+
+        sendJsonRequest(href, 'POST', info)
+            .then(res => {
+                console.log(res);
+                console.log(res.status);
+                if (res.status == 200)
+                    window.location.reload();
+            });
+        console.log('Sent request to checkout!');
+    });
+
+    console.log(href);
+};

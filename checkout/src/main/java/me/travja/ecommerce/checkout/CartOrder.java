@@ -14,7 +14,7 @@ public class CartOrder {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.MERGE)
     private List<CartItem> items = new ArrayList<>();
 
     private String email, address;

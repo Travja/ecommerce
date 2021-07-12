@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,9 +16,11 @@ import java.net.URL;
 @RestController
 @RequestMapping("/checkout")
 @AllArgsConstructor
+@CrossOrigin
 public class CheckoutRestController {
 
     private OrderRepository repo;
+    private CartRepository cartRepo;
 
     @PostMapping("")
     public ResponseEntity<Object> getCart(@RequestBody CheckoutRequest request) {
@@ -43,15 +42,21 @@ public class CheckoutRestController {
             order.setEmail(email);
             order.setItems(cart.getItems());
 
+            order.getItems().forEach(it -> System.out.println(it));
+
+            System.out.println("Made it to 1");
             repo.save(order);
+            System.out.println("Made it to 2");
 
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setCart(cart);
             emailRequest.setEmail(email);
             boolean sentRequest = sendEmail(emailRequest);
-            if (sentRequest)
+            if (sentRequest) {
+                cart.destroy();
+                cartRepo.deleteById(cart.getSessionId());
                 return new ResponseEntity<>(HttpStatus.OK);
-            else
+            } else
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
