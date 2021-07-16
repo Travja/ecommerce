@@ -1,6 +1,7 @@
 package me.travja.ecommerce.checkout;
 
 import lombok.Data;
+import me.travja.ecommerce.models.CartItem;
 
 import javax.persistence.*;
 import java.util.ArrayList;

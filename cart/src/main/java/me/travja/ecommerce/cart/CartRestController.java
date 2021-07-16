@@ -1,7 +1,12 @@
 package me.travja.ecommerce.cart;
 
 import lombok.AllArgsConstructor;
+import me.travja.ecommerce.models.Cart;
+import me.travja.ecommerce.models.CartItem;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -14,6 +19,24 @@ public class CartRestController {
 
     private final CartRepository repo;
     private final ItemRepository itemRepo;
+    private final LoadBalancerClient loadBalancerClient;
+    private final RestTemplate restTemplate;
+
+    public void test() {
+        ServiceInstance serviceInstance = loadBalancerClient.choose("student-service");
+        if (serviceInstance == null)
+            System.err.println("Service instance is null... Couldn't find the service?");
+        else {
+            System.out.println("Student service found at: " + serviceInstance.getUri());
+
+//            for (Integer studentId : course.getStudentIds()) {
+//                String url = serviceInstance.getUri() + "/" + studentId;
+//                Student student = restTemplate.getForObject(url, Student.class);
+//                e.getStudents().add(student);
+//            }
+//            enrollments.add(e);
+        }
+    }
 
     @GetMapping("/all")
     public List<Cart> getAllCarts() {

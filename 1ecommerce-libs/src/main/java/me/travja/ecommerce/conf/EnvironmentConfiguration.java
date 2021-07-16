@@ -1,4 +1,4 @@
-package me.travja.ecommerce.catalog;
+package me.travja.ecommerce.conf;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

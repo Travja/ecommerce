@@ -1,0 +1,6 @@
+me\travja\ecommerce\conf\DatabaseConfiguration.class
+me\travja\ecommerce\Services.class
+me\travja\ecommerce\conf\BeanConf.class
+me\travja\ecommerce\models\CartItem.class
+me\travja\ecommerce\conf\EnvironmentConfiguration.class
+me\travja\ecommerce\models\Cart.class

@@ -2,6 +2,7 @@ package me.travja.ecommerce.checkout;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import me.travja.ecommerce.models.Cart;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

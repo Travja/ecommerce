@@ -1,6 +1,15 @@
 version: '3.9'
 
 services:
+  discovery:
+    container_name: discovery
+    build:
+      context: ./discovery
+    ports:
+      - 5000:5000
+    networks:
+      - ecommerce
+
   ecommerce-mysql:
     build:
       context: ./docker/mysql
@@ -30,6 +39,9 @@ services:
       - DATABASE_NAME=ecom
       - DATABASE_USERNAME=Travja
       - DATABASE_PASSWORD=test
+      - SERVER_PORT=8080
+      - REGISTRY_HOST=discovery
+      - APP_NAME=catalog-service
     networks:
       - ecommerce
 
@@ -49,6 +61,9 @@ services:
       - DATABASE_NAME=ecom
       - DATABASE_USERNAME=Travja
       - DATABASE_PASSWORD=test
+      - SERVER_PORT=8080
+      - REGISTRY_HOST=discovery
+      - APP_NAME=cart-service
     networks:
       - ecommerce
 
@@ -68,6 +83,9 @@ services:
       - DATABASE_NAME=ecom
       - DATABASE_USERNAME=Travja
       - DATABASE_PASSWORD=test
+      - SERVER_PORT=8080
+      - REGISTRY_HOST=discovery
+      - APP_NAME=checkout-service
     networks:
       - ecommerce
 
@@ -77,6 +95,7 @@ services:
     container_name: card-service
     depends_on:
       - ecommerce-mysql
+      - discovery
     restart: always
     ports:
       - 8083:8080
@@ -87,6 +106,9 @@ services:
       - DATABASE_NAME=ecom
       - DATABASE_USERNAME=Travja
       - DATABASE_PASSWORD=test
+      - SERVER_PORT=8080
+      - REGISTRY_HOST=discovery
+      - APP_NAME=card-service
     networks:
       - ecommerce
 
@@ -106,6 +128,9 @@ services:
       - DATABASE_NAME=ecom
       - DATABASE_USERNAME=Travja
       - DATABASE_PASSWORD=test
+      - SERVER_PORT=8080
+      - REGISTRY_HOST=discovery
+      - APP_NAME=email-service
     networks:
       - ecommerce
 

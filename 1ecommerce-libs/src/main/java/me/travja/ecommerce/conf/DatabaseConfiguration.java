@@ -1,4 +1,4 @@
-package me.travja.ecommerce.catalog;
+package me.travja.ecommerce.conf;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;

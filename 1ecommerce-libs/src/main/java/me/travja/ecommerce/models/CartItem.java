@@ -1,4 +1,4 @@
-package me.travja.ecommerce.cart;
+package me.travja.ecommerce.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
