@@ -4,3 +4,4 @@ util/docker/mysql/
 **/.mvn/
 **/node_modules/
 venv/
+**/target/
