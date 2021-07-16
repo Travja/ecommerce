@@ -4,7 +4,7 @@ services:
   discovery:
     container_name: discovery
     build:
-      context: ./discovery
+      context: ./modules/discovery
     ports:
       - 5000:5000
     networks:
@@ -12,20 +12,20 @@ services:
 
   ecommerce-mysql:
     build:
-      context: ./docker/mysql
+      context: ./util/docker/mysql
     container_name: ecommerce-mysql
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE
     ports:
       - 3307:3306
     volumes:
-      - ./docker/mysql/data:/var/lib/mysql
+      - ./util/docker/mysql/data:/var/lib/mysql
     networks:
       - ecommerce
 
   ecommerce-catalog:
     build:
-      context: ./catalog
+      context: ./modules/catalog
     container_name: ecommerce-catalog
     depends_on:
       - ecommerce-mysql
@@ -47,7 +47,7 @@ services:
 
   ecommerce-carts:
     build:
-      context: ./cart
+      context: ./modules/cart
     container_name: ecommerce-carts
     depends_on:
       - ecommerce-mysql
@@ -69,7 +69,7 @@ services:
 
   ecommerce-checkout:
     build:
-      context: ./checkout
+      context: ./modules/checkout
     container_name: ecommerce-checkout
     depends_on:
       - ecommerce-mysql
@@ -91,7 +91,7 @@ services:
 
   card-service:
     build:
-      context: ./card
+      context: ./modules/card
     container_name: card-service
     depends_on:
       - ecommerce-mysql
@@ -114,7 +114,7 @@ services:
 
   email-service:
     build:
-      context: ./email
+      context: ./modules/email
     container_name: email-service
     depends_on:
       - ecommerce-mysql
@@ -136,7 +136,7 @@ services:
 
   node:
     build:
-      context: ./ecommerce
+      context: ./modules/ecommerce
     container_name: node
     depends_on:
       - ecommerce-catalog

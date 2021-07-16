@@ -6,13 +6,13 @@
         <groupId>me.travja.ecommerce</groupId>
         <artifactId>spring-data</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../parent/spring-data</relativePath>
+        <relativePath>../../parent/spring-data</relativePath>
     </parent>
 
     <groupId>me.travja.ecommerce.ecommerce</groupId>
-    <artifactId>checkout</artifactId>
+    <artifactId>catalog</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Checkout</name>
-    <description>Checkout service for ECommerce App</description>
+    <name>Catalog</name>
+    <description>Catalog service for ECommerce App</description>
 
 </project>

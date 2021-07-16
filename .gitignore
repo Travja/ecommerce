@@ -1,6 +1,6 @@
 .idea/
 *.iml
-docker/mysql/
-*/.mvn/
-*/node_modules/
+util/docker/mysql/
+**/.mvn/
+**/node_modules/
 venv/
