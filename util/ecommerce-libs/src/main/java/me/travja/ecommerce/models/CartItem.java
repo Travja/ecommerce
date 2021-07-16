@@ -1,39 +1,19 @@
 package me.travja.ecommerce.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity//(name = "item")
+@Data
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    @Setter
-    private int uid;
+    private int id;
 
-    @Getter
-    @Setter
-    @JsonProperty(value = "id")
-    private int itemId;
-
-    @Getter
-    @Setter
-    private String title, description;
-    @Getter
-    @Setter
-    private double unitPrice = -1;
-    @Getter
-    @Setter
+    @OneToOne
+    private Item item;
     private int qty;
 
-    public CartItem() {
-
-    }
 }

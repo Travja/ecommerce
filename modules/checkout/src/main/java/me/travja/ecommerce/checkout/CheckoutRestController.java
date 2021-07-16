@@ -3,6 +3,8 @@ package me.travja.ecommerce.checkout;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import me.travja.ecommerce.models.Cart;
+import me.travja.ecommerce.models.EmailRequest;
+import me.travja.ecommerce.repo.CartRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,21 +43,17 @@ public class CheckoutRestController {
             CartOrder order = new CartOrder();
             order.setAddress(address);
             order.setEmail(email);
-            order.setItems(cart.getItems());
+            order.setCart(cart);
 
-            order.getItems().forEach(it -> System.out.println(it));
-
-            System.out.println("Made it to 1");
             repo.save(order);
-            System.out.println("Made it to 2");
 
             EmailRequest emailRequest = new EmailRequest();
             emailRequest.setCart(cart);
             emailRequest.setEmail(email);
             boolean sentRequest = sendEmail(emailRequest);
             if (sentRequest) {
-                cart.destroy();
-                cartRepo.deleteById(cart.getSessionId());
+//                cart.destroy();
+//                cartRepo.deleteById(cart.getSessionId());
                 return new ResponseEntity<>(HttpStatus.OK);
             } else
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

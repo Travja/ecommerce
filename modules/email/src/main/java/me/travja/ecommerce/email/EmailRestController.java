@@ -1,6 +1,7 @@
 package me.travja.ecommerce.email;
 
 import lombok.AllArgsConstructor;
+import me.travja.ecommerce.models.EmailRequest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.PostMapping;

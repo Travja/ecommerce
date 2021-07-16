@@ -1,4 +1,4 @@
-package me.travja.ecommerce.catalog;
+package me.travja.ecommerce.models;
 
 import lombok.Getter;
 import lombok.Setter;

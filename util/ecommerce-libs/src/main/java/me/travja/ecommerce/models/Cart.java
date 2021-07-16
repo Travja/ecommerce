@@ -31,15 +31,20 @@ public class Cart {
 
     }
 
-    public boolean containsItem(CartItem item) {
+    public boolean containsItem(Item item) {
+        return items.stream().filter(it -> it.getItem().getId() == item.getId()).count() > 0;
+    }
+
+    private Optional<CartItem> findItem(int id) {
+        System.out.println("Looking for " + id);
         for (CartItem cartItem : items) {
-            System.out.println("Items: " + cartItem.getItemId());
+            System.out.println("Items: " + cartItem.getItem().getId());
         }
-        return items.stream().filter(it -> it.getItemId() == item.getItemId()).count() > 0;
+        return items.stream().filter(it -> it.getItem().getId() == id).findFirst();
     }
 
     public void addItem(CartItem item) {
-        Optional<CartItem> i = items.stream().filter(it -> it.getItemId() == item.getItemId()).findFirst();
+        Optional<CartItem> i = findItem(item.getItem().getId());
 
         i.ifPresentOrElse(
                 it -> {
@@ -55,7 +60,7 @@ public class Cart {
     }
 
     public void removeItem(CartItem item) {
-        Optional<CartItem> i = items.stream().filter(it -> it.getItemId() == item.getItemId()).findFirst();
+        Optional<CartItem> i = findItem(item.getItem().getId());
 
         i.ifPresent(it -> {
             if (item.getQty() >= it.getQty()) {
@@ -68,6 +73,10 @@ public class Cart {
             }
         });
 //        item.setCart(null);
+    }
+
+    public double getTotal() {
+        return items.stream().mapToDouble(item -> item.getQty() * item.getItem().getUnitPrice()).sum();
     }
 
     public void destroy() {

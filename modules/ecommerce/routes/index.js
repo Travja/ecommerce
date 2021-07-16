@@ -8,4 +8,9 @@ router.get('/', (req, res, next) => {
     res.render('index', {title: 'ECommerce'});
 });
 
+router.get('/destroy', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
 module.exports = router;

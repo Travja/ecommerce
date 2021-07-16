@@ -1,11 +1,9 @@
 package me.travja.ecommerce.checkout;
 
 import lombok.Data;
-import me.travja.ecommerce.models.CartItem;
+import me.travja.ecommerce.models.Cart;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -15,8 +13,8 @@ public class CartOrder {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @OneToMany(cascade = CascadeType.MERGE)
-    private List<CartItem> items = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.MERGE)
+    private Cart cart;
 
     private String email, address;
 

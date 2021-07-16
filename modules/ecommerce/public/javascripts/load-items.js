@@ -34,9 +34,12 @@ let createButton = (id, text, action) => {
 
 let addItem = item => {
     let sid = getCookie('sid');
-    console.log(item);
-    item.qty = 1;
-    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/additem', 'POST', item)
+    let send = {
+        item,
+        qty: 1
+    }
+    console.log(send);
+    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/additem', 'POST', send)
         .then(res => {
             console.log('Successfully POSTed to cart.');
             updateCart();
@@ -96,7 +99,7 @@ let searchItems = (title) => {
                 return;
             }
             let tbl = document.getElementById('items');
-            tbl.innerHTML = defCart;
+            tbl.innerHTML = defCatalog;
             data.forEach(item => {
                 let elm = document.createElement('tr');
                 elm.appendChild(createElement('td', item.id));
@@ -128,7 +131,8 @@ let updateCart = () => {
             document.getElementById('cart').innerHTML = defCart;
             let subtotal = 0;
             if (data.items)
-                data.items.forEach(item => {
+                data.items.forEach(it => {
+                    let item = it.item;
                     let elm = document.createElement('tr');
                     elm.appendChild(createElement('td', item.id));
                     elm.appendChild(createElement('td', item.title));
@@ -137,30 +141,29 @@ let updateCart = () => {
                     let quantity = document.createElement('div');
                     quantity.classList = ['qtyCell'];
                     quantity.appendChild(createButton(null, '-', evt => {
-                        item.qty = 1;
-                        fetch('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem', {
-                            method: 'POST',
-                            body: JSON.stringify(item),
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        }).then(res => {
-                            console.log('Successfully removed item from cart.', res);
+                        let send = {
+                            item,
+                            qty: 1
+                        }
+                        console.log(send);
+                        sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem', 'POST', send)
+                            .then(res => {
+                                console.log('Successfully removed item from cart.', res);
 
-                            updateCart();
-                        });
+                                updateCart();
+                            });
                     }));
                     let qty = document.createElement('div');
-                    qty.innerHTML = item.qty;
+                    qty.innerHTML = it.qty;
                     qty.classList = ['qty'];
                     quantity.appendChild(qty);
                     quantity.appendChild(createButton(null, '+', evt => addItem(item)));
 
                     elm.appendChild(createElement('td', quantity));
-                    let cost = (item.unitPrice * item.qty);
+                    let cost = (item.unitPrice * it.qty);
                     subtotal += cost;
                     elm.appendChild(createElement('td', '$' + cost.toFixed(2)));
-                    elm.appendChild(createElement('td', createRemoveButton(item)));
+                    elm.appendChild(createElement('td', createRemoveButton(it)));
                     tbl.appendChild(elm);
                 });
 
@@ -233,7 +236,7 @@ document.getElementById('checkoutBtn').onclick = () => {
                 console.log(res);
                 console.log(res.status);
                 if (res.status == 200)
-                    window.location.reload();
+                    window.location = window.location.origin + "/destroy";
             });
         console.log('Sent request to checkout!');
     });

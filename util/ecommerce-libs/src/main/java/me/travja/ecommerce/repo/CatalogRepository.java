@@ -1,5 +1,6 @@
-package me.travja.ecommerce.catalog;
+package me.travja.ecommerce.repo;
 
+import me.travja.ecommerce.models.Item;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

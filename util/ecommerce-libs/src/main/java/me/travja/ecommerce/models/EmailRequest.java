@@ -1,4 +1,4 @@
-package me.travja.ecommerce.checkout;
+package me.travja.ecommerce.models;
 
 import lombok.Data;
 import me.travja.ecommerce.models.Cart;
