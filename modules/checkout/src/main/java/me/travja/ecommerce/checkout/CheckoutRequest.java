@@ -8,7 +8,7 @@ public class CheckoutRequest {
 
     private String email;
     private String address;
-    private Cart cart;
+//    private Cart cart;
     private CardInfo cardInfo;
 
 }

@@ -1,20 +1,17 @@
 package me.travja.ecommerce.checkout;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import me.travja.ecommerce.models.Cart;
 import me.travja.ecommerce.models.EmailRequest;
-import me.travja.ecommerce.repo.CartRepository;
+import me.travja.ecommerce.models.ErrorBody;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/checkout")
@@ -22,13 +19,18 @@ import java.net.URL;
 @CrossOrigin
 public class CheckoutRestController {
 
+    private final LoadBalancerClient loadBalancerClient;
+    private final RestTemplate restTemplate;
     private OrderRepository repo;
-    private CartRepository cartRepo;
 
-    @PostMapping("")
-    public ResponseEntity<Object> getCart(@RequestBody CheckoutRequest request) {
+    @PostMapping("/{cartId}")
+    @Transactional
+    public ResponseEntity<Object> checkout(@PathVariable String cartId, @RequestBody CheckoutRequest request) {
 
-        Cart cart = request.getCart();
+        Cart cart = getCart(cartId);
+        if (cart.getItems().isEmpty())
+            return ResponseEntity.badRequest().body(new ErrorBody("Cart is empty"));
+
         CardInfo cardInfo = request.getCardInfo();
         String address = request.getAddress();
         String email = request.getEmail();
@@ -56,82 +58,57 @@ public class CheckoutRestController {
 //                cartRepo.deleteById(cart.getSessionId());
                 return new ResponseEntity<>(HttpStatus.OK);
             } else
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                throw new RuntimeException("Could not find email service.");
         } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ErrorBody("Card not valid"), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    private Cart getCart(String cartId) {
+        ServiceInstance serviceInstance = loadBalancerClient.choose("cart-service");
+        if (serviceInstance == null) {
+            System.err.println("Service instance is null... Couldn't find the service?");
+            return null;
+        } else {
+            System.out.println("Cart service found at: " + serviceInstance.getUri());
+
+            String url = serviceInstance.getUri() + "/cart/" + cartId;
+            return restTemplate.getForObject(url, Cart.class);
         }
     }
 
     private boolean sendEmail(EmailRequest request) {
-        try {
-            URL url = new URL("http://email-service:8080/email");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        ServiceInstance serviceInstance = loadBalancerClient.choose("email-service");
+        if (serviceInstance == null) {
+            System.err.println("Service instance is null... Couldn't find the service?");
+            return false;
+        } else {
+            System.out.println("Email service found at: " + serviceInstance.getUri());
 
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json; utf-8");
-            conn.setRequestProperty("Accept", "application/json");
-
-            conn.setDoOutput(true);
-
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(request);
-
-            OutputStream os = conn.getOutputStream();
-            byte[] input = json.getBytes("utf-8");
-            os.write(input, 0, input.length);
-            os.close();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-            StringBuilder response = new StringBuilder();
-            String responseLine;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
-            }
-            boolean authorized = response.toString().equalsIgnoreCase("true");
-            br.close();
-            return authorized;
-        } catch (IOException e) {
-            System.out.println("Could not establish connection to email auth service.");
-            e.printStackTrace();
+            String url = serviceInstance.getUri() + "/email";
+            ResponseEntity<Boolean> res = restTemplate.postForEntity(url, request, Boolean.class);
+            if (res.getStatusCode() == HttpStatus.OK)
+                return res.getBody();
+            else
+                return false;
         }
-
-        return false;
     }
 
     private boolean checkAuth(CardInfo cardInfo) {
-        try {
-            URL url = new URL("http://card-service:8080/card/check");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        ServiceInstance serviceInstance = loadBalancerClient.choose("card-service");
+        if (serviceInstance == null) {
+            System.err.println("Service instance is null... Couldn't find the service?");
+            return false;
+        } else {
+            System.out.println("Card service found at: " + serviceInstance.getUri());
 
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json; utf-8");
-            conn.setRequestProperty("Accept", "application/json");
-
-            conn.setDoOutput(true);
-
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(cardInfo);
-
-            OutputStream os = conn.getOutputStream();
-            byte[] input = json.getBytes("utf-8");
-            os.write(input, 0, input.length);
-            os.close();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-            StringBuilder response = new StringBuilder();
-            String responseLine;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
-            }
-            boolean authorized = response.toString().equalsIgnoreCase("true");
-            br.close();
-            return authorized;
-        } catch (IOException e) {
-            System.out.println("Could not establish connection to card auth service.");
-            e.printStackTrace();
+            String url = serviceInstance.getUri() + "/card/check";
+            ResponseEntity<Boolean> res = restTemplate.postForEntity(url, cardInfo, Boolean.class);
+            if (res.getStatusCode() == HttpStatus.OK)
+                return res.getBody();
+            else
+                return false;
         }
-
-        return false;
     }
 
 }

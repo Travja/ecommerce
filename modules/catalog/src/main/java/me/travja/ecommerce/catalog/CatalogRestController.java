@@ -26,6 +26,11 @@ public class CatalogRestController {
         return repo.searchByTitle(title);
     }
 
+    @GetMapping("/items/{itemId}")
+    public Item getById(@PathVariable int itemId) {
+        return repo.findById(itemId).orElse(null);
+    }
+
     @PostMapping("/items")
     public void createItem(@RequestBody Item item) {
         repo.save(item);
@@ -53,7 +58,7 @@ public class CatalogRestController {
 
     @PostConstruct
     public void init() {
-        if(repo.findAll().size() == 0) {
+        if (repo.findAll().size() == 0) {
             repo.save(new Item("Chips", "What a great snack!", 1.99));
             repo.save(new Item("Milk", "Basic 2% Milk", 2.89));
             repo.save(new Item("Eggs", "Just a dozen eggs", 1.79));

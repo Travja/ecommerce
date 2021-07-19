@@ -34,15 +34,28 @@ let createButton = (id, text, action) => {
 
 let addItem = item => {
     let sid = getCookie('sid');
-    let send = {
-        item,
-        qty: 1
-    }
-    console.log(send);
-    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/additem', 'POST', send)
+    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/additem/' + item.id, 'POST')
         .then(res => {
-            console.log('Successfully POSTed to cart.');
-            updateCart();
+            if (res.ok) {
+                console.log('Successfully POSTed to cart.');
+                updateCart();
+            } else {
+                alert('It seems that the server is having trouble. Please wait a bit and try again.');
+            }
+        });
+};
+
+let removeItem = (item, qty) => {
+    let sid = getCookie('sid');
+    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem/' + (item.item ? item.item.id : item.id) +
+        (qty ? '?qty=' + qty : ''), 'POST')
+        .then(res => {
+            if (res.ok) {
+                console.log('Successfully removed item from cart.', res);
+                updateCart();
+            } else {
+                alert('It seems that the server is having trouble. Please wait a bit and try again.');
+            }
         });
 };
 
@@ -51,15 +64,7 @@ let createAddButton = item => {
 };
 
 let createRemoveButton = item => {
-    return createButton(null, 'Remove', evt => {
-        let sid = getCookie('sid');
-        sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem', 'POST', item)
-            .then(res => {
-                console.log('Successfully removed item from cart.', res);
-
-                updateCart();
-            });
-    });
+    return createButton(null, 'Remove', evt => removeItem(item, item.qty));
 };
 
 let getItems = () => {
@@ -120,9 +125,11 @@ let updateCart = () => {
 
     fetch('http://' + window.location.hostname + ':8081/cart/' + sid)
         .then(response => {
+            // return response.text();
             return response.json();
         })
         .then(data => {
+            console.log(data);
             if (!data) {
                 console.log('Cart info not found.');
                 return;
@@ -140,19 +147,7 @@ let updateCart = () => {
 
                     let quantity = document.createElement('div');
                     quantity.classList = ['qtyCell'];
-                    quantity.appendChild(createButton(null, '-', evt => {
-                        let send = {
-                            item,
-                            qty: 1
-                        }
-                        console.log(send);
-                        sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem', 'POST', send)
-                            .then(res => {
-                                console.log('Successfully removed item from cart.', res);
-
-                                updateCart();
-                            });
-                    }));
+                    quantity.appendChild(createButton(null, '-', evt => removeItem(item)));
                     let qty = document.createElement('div');
                     qty.innerHTML = it.qty;
                     qty.classList = ['qty'];
@@ -205,7 +200,7 @@ getItems();
 updateCart();
 
 document.getElementById('checkoutBtn').onclick = () => {
-    let href = 'http://' + window.location.hostname + ':8082/checkout';
+    let href = 'http://' + window.location.hostname + ':8082/checkout/' + getCookie('sid');
 
     let name = document.getElementById('name').value;
     let email = document.getElementById('email').value;
@@ -222,24 +217,32 @@ document.getElementById('checkoutBtn').onclick = () => {
         cvv
     }
 
-    getCart(getCookie('sid'), cart => {
+    // getCart(getCookie('sid'), cart => {
         let info = {
             name,
             email,
             address,
             cardInfo,
-            cart
+            // cart
         };
 
         sendJsonRequest(href, 'POST', info)
             .then(res => {
                 console.log(res);
                 console.log(res.status);
-                if (res.status == 200)
+                if (res.status == 200) {
                     window.location = window.location.origin + "/destroy";
+                    return false;
+                } else {
+                    return res.json();
+                }
+            })
+            .then(err => {
+                if(err)
+                    alert(err.message ? err.message : "Something went wrong...");
             });
         console.log('Sent request to checkout!');
-    });
+    // });
 
     console.log(href);
 };
