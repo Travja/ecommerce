@@ -16,7 +16,6 @@ import javax.transaction.Transactional;
 @RestController
 @RequestMapping("/checkout")
 @AllArgsConstructor
-@CrossOrigin
 public class CheckoutRestController {
 
     private final LoadBalancerClient loadBalancerClient;

@@ -34,7 +34,7 @@ let createButton = (id, text, action) => {
 
 let addItem = item => {
     let sid = getCookie('sid');
-    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/additem/' + item.id, 'POST')
+    sendJsonRequest('http://' + window.location.hostname + ':8070/cart-service/cart/' + sid + '/additem/' + item.id, 'POST')
         .then(res => {
             if (res.ok) {
                 console.log('Successfully POSTed to cart.');
@@ -47,7 +47,7 @@ let addItem = item => {
 
 let removeItem = (item, qty) => {
     let sid = getCookie('sid');
-    sendJsonRequest('http://' + window.location.hostname + ':8081/cart/' + sid + '/removeitem/' + (item.item ? item.item.id : item.id) +
+    sendJsonRequest('http://' + window.location.hostname + ':8070/cart-service/cart/' + sid + '/removeitem/' + (item.item ? item.item.id : item.id) +
         (qty ? '?qty=' + qty : ''), 'POST')
         .then(res => {
             if (res.ok) {
@@ -68,7 +68,7 @@ let createRemoveButton = item => {
 };
 
 let getItems = () => {
-    fetch('http://' + window.location.hostname + ':8080/api/items')
+    fetch('http://' + window.location.hostname + ':8070/catalog-service/api/items')
         .then(response => {
             return response.json();
         })
@@ -94,7 +94,7 @@ let getItems = () => {
 };
 
 let searchItems = (title) => {
-    fetch('http://' + window.location.hostname + ':8080/api/items/search?title=' + title)
+    fetch('http://' + window.location.hostname + ':8070/catalog-service/api/items/search?title=' + title)
         .then(response => {
             return response.json();
         })
@@ -123,7 +123,7 @@ let searchItems = (title) => {
 let updateCart = () => {
     let sid = getCookie('sid');
 
-    fetch('http://' + window.location.hostname + ':8081/cart/' + sid)
+    fetch('http://' + window.location.hostname + ':8070/cart-service/cart/' + sid)
         .then(response => {
             // return response.text();
             return response.json();
@@ -186,7 +186,7 @@ let getCookie = (cname) => {
 };
 
 let getCart = (cname, callback) => {
-    fetch('http://' + window.location.hostname + ':8081/cart/' + cname)
+    fetch('http://' + window.location.hostname + ':8070/cart-service/cart/' + cname)
         .then(res => res.json())
         .then(data => {
             callback(data);
@@ -200,7 +200,7 @@ getItems();
 updateCart();
 
 document.getElementById('checkoutBtn').onclick = () => {
-    let href = 'http://' + window.location.hostname + ':8082/checkout/' + getCookie('sid');
+    let href = 'http://' + window.location.hostname + ':8070/checkout-service/checkout/' + getCookie('sid');
 
     let name = document.getElementById('name').value;
     let email = document.getElementById('email').value;

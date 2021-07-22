@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
-@CrossOrigin
+//@CrossOrigin(origins = {"gateway:8080"})
 public class CatalogRestController {
 
     private final CatalogRepository repo;

@@ -2,10 +2,10 @@ package me.travja.ecommerce.card;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
-@EnableDiscoveryClient
+@EnableEurekaClient
 //@RibbonClient(name = "card-service")
 public class CardApplication {
 
