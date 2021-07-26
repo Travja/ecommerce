@@ -1,5 +1,6 @@
-package me.travja.ecommerce.checkout;
+package me.travja.ecommerce.repo;
 
+import me.travja.ecommerce.models.CartOrder;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -11,7 +11,8 @@ body {
 }
 
 #items, #items td, #items th,
-#cart, #cart td, #cart th {
+#cart, #cart td, #cart th,
+#orders, #orders td, #orders th {
     border: 1px solid black;
     border-collapse: collapse;
     padding: 5px;

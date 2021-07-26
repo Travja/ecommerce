@@ -2,8 +2,10 @@ package me.travja.ecommerce.checkout;
 
 import lombok.AllArgsConstructor;
 import me.travja.ecommerce.models.Cart;
+import me.travja.ecommerce.models.CartOrder;
 import me.travja.ecommerce.models.EmailRequest;
 import me.travja.ecommerce.models.ErrorBody;
+import me.travja.ecommerce.repo.OrderRepository;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatus;
@@ -42,6 +44,7 @@ public class CheckoutRestController {
         if (authorized) {
 
             CartOrder order = new CartOrder();
+            order.setName(request.getName());
             order.setAddress(address);
             order.setEmail(email);
             order.setCart(cart);

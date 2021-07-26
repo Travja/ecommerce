@@ -1,7 +1,6 @@
-package me.travja.ecommerce.checkout;
+package me.travja.ecommerce.models;
 
 import lombok.Data;
-import me.travja.ecommerce.models.Cart;
 
 import javax.persistence.*;
 
@@ -16,6 +15,10 @@ public class CartOrder {
     @OneToOne(cascade = CascadeType.MERGE)
     private Cart cart;
 
-    private String email, address;
+    private String name, email, address;
+
+    private String shippedBy;
+
+    private long trackingNumber;
 
 }

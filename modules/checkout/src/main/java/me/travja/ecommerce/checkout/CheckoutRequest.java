@@ -6,8 +6,7 @@ import me.travja.ecommerce.models.Cart;
 @Data
 public class CheckoutRequest {
 
-    private String email;
-    private String address;
+    private String name, email, address;
 //    private Cart cart;
     private CardInfo cardInfo;
 
